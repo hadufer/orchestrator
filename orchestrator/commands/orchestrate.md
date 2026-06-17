@@ -9,4 +9,4 @@ Invoke the `orchestrator:orchestrator` skill to handle this task end-to-end:
 
 $ARGUMENTS
 
-ALWAYS run the orchestrator's full process end-to-end and author + run a native dynamic workflow for this task (watch it in `/workflows`). No shortcut to a direct answer, even for small tasks.
+ALWAYS run the orchestrator's full process end-to-end for this task — no shortcut to a direct answer, even for small tasks. Use the native workflow runtime if available (watch it in `/workflows`); otherwise fall back to in-conversation subagents. The skill explains both modes.

@@ -40,11 +40,16 @@ Announce the choice, then load and follow the matching recipe:
 - [Tournament](./patterns/tournament.md)
 - [Loop-Until-Done](./patterns/loop-until-done.md)
 
-## Step 2 — Author & run the workflow
+## Step 2 — Run the workflow
 
-Write a JS script and let the native runtime execute it (visible in `/workflows`). Save under `.claude/workflows/` (project) or `~/.claude/workflows/` (personal).
+**Pick the execution mode first:**
 
-**Skeleton — the real, current runtime API** (mirrors working scripts in `~/.claude/.../workflows/scripts/`):
+- **Native runtime — preferred, gives the `/workflows` visual.** If the dynamic-workflow runtime is available (a Workflow tool is exposed / `/workflows` works, e.g. under `/effort ultracode`): author the JS script below and let the runtime execute it. Save under `.claude/workflows/` (project) or `~/.claude/workflows/` (personal).
+- **In-conversation fallback — always works, no visual.** If the runtime is NOT available: run the SAME pattern with native subagents — emit multiple `Agent` tool calls in ONE message (parallel + barrier), `subagent_type: Explore` (read-only) or `general-purpose`, `model: opus`, then synthesize yourself. Same patterns, same phases, same Opus 4.8; you only lose the `/workflows` visual + background/resume. Monitor via `/agents` and `/tasks`.
+
+The recipe files describe the STRUCTURE (phases, agents, schemas, stop conditions) — it maps to either mode. Native runtime → write the JS skeleton below; fallback → translate each `agent()` / `parallel()` / `pipeline()` into `Agent`-tool calls (parallel = several calls in one message).
+
+**Native skeleton — the real runtime API** (mirrors working scripts in `~/.claude/.../workflows/scripts/`):
 
 ```js
 export const meta = {
@@ -82,4 +87,5 @@ return merged   // ONE consolidated result
 - **Opus 4.8 / xhigh.** Agents inherit the launching session. Launch from `/orchestrator:orchestrate` (frontmatter pins `claude-opus-4-8` / `effort: xhigh`) or run `/effort ultracode` first. Effort is not a per-agent script field.
 - **Concurrency.** The runtime caps ~16 concurrent agents. For larger fan-outs, split into waves (two `parallel`/`pipeline` calls).
 - **Deterministic control flow.** Keep the orchestration script deterministic — no `Date.now()` / `Math.random()` / I/O in the control flow (the runtime may reject them). Put randomness, file reads and shell work inside the agents, not the script.
+- **Navigate code with LSP when available.** For code tasks, tell each exploring agent to use LSP — go-to-definition, find references, document/workspace symbols, diagnostics (the `LSP` tool; e.g. `csharp-lsp` / `typescript-lsp`) — to trace callers, implementations and types precisely, instead of relying only on `grep`/`Read`. Fall back to text search only where no LSP server covers the language.
 - **One synthesis out.** The top-level `return` is the single consolidated result — dedupe and rank first; never dump raw agent outputs.
