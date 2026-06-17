@@ -17,7 +17,7 @@ const UNIT = {
 phase('Fanout')
 const parts = await parallel(UNITS.map(u => () =>
   agent(`${CTX}\n\nProcess ONLY ${u}. Return your findings; empty array if none.`,
-    { label: u, phase: 'Fanout', schema: UNIT, agentType: 'Explore' })
+    { label: u, phase: 'Fanout', schema: UNIT, agentType: 'orchestrator-analyst' })
 )).then(r => r.filter(Boolean))
 
 phase('Synthesize')
