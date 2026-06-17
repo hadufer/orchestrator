@@ -1,0 +1,6 @@
+{
+  "name": "orchestrator",
+  "description": "Dynamic multi-agent workflows: routes a task to the right pattern (classify-and-act, fanout-and-synthesize, adversarial verification, generate-and-filter, tournament, loop-until-done) and authors a native Claude Code dynamic workflow (the /workflows runtime). Local, Opus 4.8 / xhigh.",
+  "version": "0.1.0",
+  "author": { "name": "hdufer" }
+}

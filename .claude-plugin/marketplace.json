@@ -1,0 +1,11 @@
+{
+  "name": "orchestrator-marketplace",
+  "owner": { "name": "hdufer" },
+  "plugins": [
+    {
+      "name": "orchestrator",
+      "source": "./orchestrator",
+      "description": "Dynamic multi-agent workflow orchestrator: routes a task to the right pattern and authors a native /workflows script (Opus 4.8 / xhigh)."
+    }
+  ]
+}
