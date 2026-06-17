@@ -20,7 +20,7 @@ Already in a session? Run `/reload-plugins`.
 
 Or just ask Claude to "orchestrate" / "run a workflow" — the skill auto-triggers.
 
-The router first decides whether the task even warrants a workflow (it refuses small/trivial tasks and just does them). If it does, it picks one of six patterns — Classify-And-Act, Fanout-And-Synthesize, Adversarial Verification, Generate-And-Filter, Tournament, Loop-Until-Done — or composes several.
+The router ALWAYS runs the full process (no shortcut, even for small tasks): it picks one of six patterns — Classify-And-Act, Fanout-And-Synthesize, Adversarial Verification, Generate-And-Filter, Tournament, Loop-Until-Done — or composes several, and runs it as a workflow.
 
 It then writes a workflow script (under `.claude/workflows/`) and runs it on the native runtime. Watch phases, agents and token usage live with `/workflows` (`p` pause, `x` stop, `s` save); the consolidated result lands back in the conversation.
 

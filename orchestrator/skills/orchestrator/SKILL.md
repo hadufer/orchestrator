@@ -9,19 +9,14 @@ effort: xhigh
 
 Route a task to the right multi-agent pattern, then **author and run a native Claude Code dynamic workflow** — a small JS script the `/workflows` runtime executes in the background (watch it live in `/workflows`). You don't call the `Agent` tool by hand; you write a script using `agent()` / `parallel()` / `pipeline()`.
 
-## Step 0 — Triage gate (always first)
+## Step 0 — Always run the full process (no shortcut)
 
-Workflows are powerful and EXPENSIVE: you pay for many agents instead of one. Before authoring a workflow, decide whether the task warrants it.
+`/orchestrator:orchestrate` ALWAYS runs the complete process — there is **no bailing out to a direct answer**, even for a small or trivial task. Every run goes through Step 1 (pick a pattern) and Step 2 (author the workflow with all its phases + final synthesis).
 
-**Do NOT build a workflow** — do the task directly and say why — when it is:
-- a small/local change (a few lines, one file), or
-- a question with a single direct answer, or
-- something faster to do yourself than to brief agents.
+Do NOT shortcut, do NOT "just do it directly". Announce the choice in one line — it is always a workflow:
+`Triage: workflow → <pattern> — <reason>`
 
-**Build a workflow** only when the task has genuine parallelism, needs isolation between units, needs adversarial checking, or explores an open-ended space.
-
-When unsure, lean toward doing it directly. State the decision in one line:
-`Triage: direct — <reason>` or `Triage: workflow → <pattern> — <reason>`.
+Cost is accepted by design: even a one-line task spins up several Opus 4.8 agents. Full process and capability over token economy — that is the intended behavior here.
 
 ## Step 1 — Pick the pattern
 
@@ -81,9 +76,10 @@ return merged   // ONE consolidated result
 ```
 
 **Contract (every workflow):**
-- **Primitives.** `agent(prompt, opts)` → one isolated agent; returns the `schema`-validated object (or text). `parallel(thunks)` → runs all, **barrier**, failures come back as `null` → always `.filter(Boolean)`. `pipeline(items, ...stages)` → **streamed** stages, `stageN(prevResult, originalItem)`. `phase(title)` and `log(msg)` drive the `/workflows` view.
+- **Primitives.** `agent(prompt, opts)` → one isolated agent; returns the `schema`-validated object (or text). `parallel(thunks)` → runs all, **barrier**, failures come back as `null` → always `.filter(Boolean)`. `pipeline(items, ...stages)` → **streamed** stages, `stageN(prevResult, originalItem, index)`. `phase(title)` and `log(msg)` drive the `/workflows` view.
 - **opts** = `{ label, phase, schema, agentType }`. Use `agentType: 'Explore'` for read-only analysis/verification. Pass a JSON Schema as `schema` (`additionalProperties: false` + `required`) to get a clean object back — no parsing, auto-retry on mismatch.
 - **Phases.** Every `phase('X')` title MUST appear in `meta.phases`.
 - **Opus 4.8 / xhigh.** Agents inherit the launching session. Launch from `/orchestrator:orchestrate` (frontmatter pins `claude-opus-4-8` / `effort: xhigh`) or run `/effort ultracode` first. Effort is not a per-agent script field.
 - **Concurrency.** The runtime caps ~16 concurrent agents. For larger fan-outs, split into waves (two `parallel`/`pipeline` calls).
+- **Deterministic control flow.** Keep the orchestration script deterministic — no `Date.now()` / `Math.random()` / I/O in the control flow (the runtime may reject them). Put randomness, file reads and shell work inside the agents, not the script.
 - **One synthesis out.** The top-level `return` is the single consolidated result — dedupe and rank first; never dump raw agent outputs.

@@ -9,4 +9,4 @@ Invoke the `orchestrator:orchestrator` skill to handle this task end-to-end:
 
 $ARGUMENTS
 
-Follow the skill's triage gate FIRST: if the task does not warrant a workflow, do it directly and say so. Otherwise author and run a native dynamic workflow (watch it in `/workflows`).
+ALWAYS run the orchestrator's full process end-to-end and author + run a native dynamic workflow for this task (watch it in `/workflows`). No shortcut to a direct answer, even for small tasks.
