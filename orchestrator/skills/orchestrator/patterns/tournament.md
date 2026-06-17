@@ -16,16 +16,23 @@ const PICK = {
   required: ['winner', 'reason'],
   properties: { winner: { type: 'string', enum: ['A', 'B'] }, reason: { type: 'string' } },
 }
+// One retry if the judge fails; if it still fails, advance A but log it (no silent bias to slot A).
+const judgePair = async (p) => {
+  if (p.length < 2) { return p[0] } // bye for the odd one out
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const v = await agent(`${CTX}\n\nWhich is better against this rubric: <rubric>?\n\n[A]\n${p[0]}\n\n[B]\n${p[1]}`,
+      { label: 'judge', phase: 'Judge', schema: PICK, agentType: 'orchestrator:orchestrator-critic' })
+    if (v) { return v.winner === 'B' ? p[1] : p[0] }
+  }
+  log('judge failed twice — advancing A by default')
+  return p[0]
+}
+
 let pool = cands
 while (pool.length > 1) {
   const pairs = []
   for (let i = 0; i < pool.length; i += 2) { pairs.push(pool.slice(i, i + 2)) }
-  pool = await parallel(pairs.map(p => () =>
-    p.length < 2
-      ? Promise.resolve(p[0])
-      : agent(`${CTX}\n\nWhich is better against this rubric: <rubric>?\n\n[A]\n${p[0]}\n\n[B]\n${p[1]}`,
-          { label: 'judge', phase: 'Judge', schema: PICK, agentType: 'orchestrator:orchestrator-critic' }).then(v => (v && v.winner === 'B') ? p[1] : p[0])
-  )).then(r => r.filter(Boolean))
+  pool = (await parallel(pairs.map(p => () => judgePair(p)))).filter(Boolean)
 }
 return pool[0]
 ```
