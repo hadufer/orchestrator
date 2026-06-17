@@ -16,7 +16,7 @@ const LABEL = {
 
 phase('Classify')
 const { class: cls } = await agent(`${CTX}\n\nClassify into exactly one label.`,
-  { label: 'classify', phase: 'Classify', schema: LABEL, agentType: 'orchestrator-analyst' })
+  { label: 'classify', phase: 'Classify', schema: LABEL, agentType: 'orchestrator:orchestrator-analyst' })
 
 phase('Act')
 const handlers = {
@@ -24,7 +24,7 @@ const handlers = {
   typeB: `<instructions for B>`,
   typeC: `<instructions for C>`,
 }
-const result = await agent(`${CTX}\n\nHandle as ${cls}:\n${handlers[cls]}`, { label: `act:${cls}`, phase: 'Act', agentType: 'orchestrator-worker' })
+const result = await agent(`${CTX}\n\nHandle as ${cls}:\n${handlers[cls]}`, { label: `act:${cls}`, phase: 'Act', agentType: 'orchestrator:orchestrator-worker' })
 return { class: cls, result }
 ```
 

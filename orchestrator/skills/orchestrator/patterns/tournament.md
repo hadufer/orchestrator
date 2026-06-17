@@ -7,7 +7,7 @@
 ```js
 phase('Attempts')
 const cands = await parallel(ANGLES.map((a, i) => () =>
-  agent(`${CTX}\n\nProduce the best <artifact>. Approach: ${a}`, { label: `cand:${i}`, phase: 'Attempts', agentType: 'orchestrator-analyst' })
+  agent(`${CTX}\n\nProduce the best <artifact>. Approach: ${a}`, { label: `cand:${i}`, phase: 'Attempts', agentType: 'orchestrator:orchestrator-analyst' })
 )).then(r => r.filter(Boolean))
 
 phase('Judge')
@@ -24,7 +24,7 @@ while (pool.length > 1) {
     p.length < 2
       ? Promise.resolve(p[0])
       : agent(`${CTX}\n\nWhich is better against this rubric: <rubric>?\n\n[A]\n${p[0]}\n\n[B]\n${p[1]}`,
-          { label: 'judge', phase: 'Judge', schema: PICK, agentType: 'orchestrator-critic' }).then(v => (v && v.winner === 'B') ? p[1] : p[0])
+          { label: 'judge', phase: 'Judge', schema: PICK, agentType: 'orchestrator:orchestrator-critic' }).then(v => (v && v.winner === 'B') ? p[1] : p[0])
   )).then(r => r.filter(Boolean))
 }
 return pool[0]

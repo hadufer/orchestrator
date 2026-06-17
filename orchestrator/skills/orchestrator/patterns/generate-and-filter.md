@@ -14,7 +14,7 @@ const LIST = {
 phase('Generate')
 const batches = await parallel(GENERATORS.map((g, i) => () =>
   agent(`${CTX}\n\nProduce ~15 candidates. Angle: ${g}. Quantity over polish.`,
-    { label: `gen:${i}`, phase: 'Generate', schema: LIST, agentType: 'orchestrator-analyst' })
+    { label: `gen:${i}`, phase: 'Generate', schema: LIST, agentType: 'orchestrator:orchestrator-analyst' })
 )).then(r => r.filter(Boolean))
 const pool = [...new Set(batches.flatMap(b => b.candidates))]
 
@@ -34,7 +34,7 @@ const TOP = {
   },
 }
 const best = await agent(`${CTX}\n\nDedupe, then pick the top-k against this rubric: <rubric>.\nCandidates:\n${pool.join('\n')}`,
-  { label: 'filter', phase: 'Filter', schema: TOP, agentType: 'orchestrator-critic' })
+  { label: 'filter', phase: 'Filter', schema: TOP, agentType: 'orchestrator:orchestrator-critic' })
 return best
 ```
 

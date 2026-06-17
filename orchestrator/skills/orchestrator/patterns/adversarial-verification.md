@@ -17,7 +17,7 @@ const VERDICT = {
 phase('Verify')
 const checked = await parallel(findings.map(f => () =>
   agent(`${CTX}\n\nTry to PROVE this is FALSE/invalid. Read the actual source. Judge ONLY the finding below — ignore how it was produced.\n${JSON.stringify(f)}`,
-    { label: `v:${f.id ?? f.title}`, phase: 'Verify', schema: VERDICT, agentType: 'orchestrator-critic' })
+    { label: `v:${f.id ?? f.title}`, phase: 'Verify', schema: VERDICT, agentType: 'orchestrator:orchestrator-critic' })
     .then(v => (v && v.verdict !== 'refuted') ? { ...f, evidence: v.evidence } : null)
 ))
 const survivors = checked.filter(Boolean)

@@ -45,7 +45,7 @@ Announce the choice, then load and follow the matching recipe:
 **Pick the execution mode first:**
 
 - **Native runtime — preferred, gives the `/workflows` visual.** If the dynamic-workflow runtime is available (a Workflow tool is exposed / `/workflows` works, e.g. under `/effort ultracode`): author the JS script below and let the runtime execute it. Save under `.claude/workflows/` (project) or `~/.claude/workflows/` (personal).
-- **In-conversation fallback — always works, no visual.** If the runtime is NOT available: run the SAME pattern with native subagents — emit multiple `Agent` tool calls in ONE message (parallel + barrier), `subagent_type:` one of the role agents (`orchestrator-analyst` / `orchestrator-critic` / `orchestrator-worker`), then synthesize yourself. Same patterns, same phases, same Opus 4.8 / xhigh (the agents pin it); you only lose the `/workflows` visual + background/resume. Monitor via `/agents` and `/tasks`.
+- **In-conversation fallback — always works, no visual.** If the runtime is NOT available: run the SAME pattern with native subagents — emit multiple `Agent` tool calls in ONE message (parallel + barrier), `subagent_type:` one of the role agents (`orchestrator:orchestrator-analyst` / `orchestrator:orchestrator-critic` / `orchestrator:orchestrator-worker`), then synthesize yourself. Same patterns, same phases, same Opus 4.8 / xhigh (the agents pin it); you only lose the `/workflows` visual + background/resume. Monitor via `/agents` and `/tasks`.
 
 The recipe files describe the STRUCTURE (phases, agents, schemas, stop conditions) — it maps to either mode. Native runtime → write the JS skeleton below; fallback → translate each `agent()` / `parallel()` / `pipeline()` into `Agent`-tool calls (parallel = several calls in one message).
 
@@ -72,7 +72,7 @@ const ITEM = {                                  // JSON Schema → agents return
 phase('Fanout')
 const parts = await parallel(UNITS.map(u => () =>
   agent(`${CTX}\n\nProcess ONLY ${u}. Return findings.`,
-    { label: u, phase: 'Fanout', schema: ITEM, agentType: 'orchestrator-analyst' })
+    { label: u, phase: 'Fanout', schema: ITEM, agentType: 'orchestrator:orchestrator-analyst' })
 ))
 
 phase('Synthesize')
@@ -83,7 +83,7 @@ return merged   // ONE consolidated result
 **Contract (every workflow):**
 - **Primitives.** `agent(prompt, opts)` → one isolated agent; returns the `schema`-validated object (or text). `parallel(thunks)` → runs all, **barrier**, failures come back as `null` → always `.filter(Boolean)`. `pipeline(items, ...stages)` → **streamed** stages, `stageN(prevResult, originalItem, index)`. `phase(title)` and `log(msg)` drive the `/workflows` view.
 - **opts** = `{ label, phase, schema, agentType }`. Set `agentType` to a plugin role agent (below). Pass a JSON Schema as `schema` (`additionalProperties: false` + `required`) to get a clean object back — no parsing, auto-retry on mismatch.
-- **Role agents (Opus 4.8 / xhigh, pinned).** Spawn each agent as one of three roles via `agentType` (native) or `subagent_type` (fallback): `orchestrator-analyst` (read-only — find / classify / research / discover / generate), `orchestrator-critic` (read-only — refute / filter / judge pairwise / verify), `orchestrator-worker` (read-write — act / build / refactor, isolated worktree). Synthesis stays with you (the lead) — no separate agent.
+- **Role agents (Opus 4.8 / xhigh, pinned).** Spawn each agent as one of three roles via `agentType` (native) or `subagent_type` (fallback): `orchestrator:orchestrator-analyst` (read-only — find / classify / research / discover / generate), `orchestrator:orchestrator-critic` (read-only — refute / filter / judge pairwise / verify), `orchestrator:orchestrator-worker` (read-write — act / build / refactor, isolated worktree). Synthesis stays with you (the lead) — no separate agent.
 - **Phases.** Every `phase('X')` title MUST appear in `meta.phases`.
 - **Opus 4.8 / xhigh.** Agents inherit the launching session. Launch from `/orchestrator:orchestrate` (frontmatter pins `claude-opus-4-8` / `effort: xhigh`) or run `/effort ultracode` first. Effort is not a per-agent script field.
 - **Concurrency.** The runtime caps ~16 concurrent agents. For larger fan-outs, split into waves (two `parallel`/`pipeline` calls).
