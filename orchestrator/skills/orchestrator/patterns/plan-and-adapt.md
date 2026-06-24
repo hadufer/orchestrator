@@ -72,4 +72,6 @@ Compose them across rounds as the task demands.
 `maxRounds` (~6) · `maxDepth` (~2) · `maxAgents` total (~30, budget) · dedupe (fingerprint = `agentType+goal`) · dep-cycle rejection · error budget (a task whose dep `failed` → `blocked`; stop if `fails > N`).
 Stop on: **quiescence** (no runnable & none running) · **objective met** · any cap. Always record `terminationReason` in `PLAN.md` and the final return.
 
+**Teardown (at termination, before synthesis):** `git worktree list` → append a `## Teardown` section to `PLAN.md` listing each worker worktree + branch + whether it has unmerged work; `git worktree remove` only the empty/merged ones, never discard unmerged work. `.orchestrator/` stays on disk (user deletes when done).
+
 **One synthesis out:** the planner's final return is the consolidated result read from the finished plan — never the raw deltas.

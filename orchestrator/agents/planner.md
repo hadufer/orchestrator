@@ -13,7 +13,8 @@ You own the whole loop:
 2. Each round: select runnable tasks (`pending` ∧ deps done ∧ within caps) → spawn ONE wave of role sub-agents (`Agent` tool; parallel = several calls in one message; `subagent_type:` `orchestrator:orchestrator-analyst`/`-critic`/`-worker`). For **supervised** tasks, grant the child permission to spawn its own bounded children and tell it to gate + aggregate them; for **unsupervised**, tell it NOT to spawn (leaf only).
 3. Collect each sub-agent's `PLAN-DELTA` → apply them one at a time as the single writer (assign `parent.n` ids, dedupe by `agentType+goal`, reject dependency cycles, drop adds past caps, set producing tasks `done`/`failed`) → rewrite `PLAN.md`, append `events.log`.
 4. Re-plan from the round's results; loop until quiescence / objective met / a cap.
-5. Return ONE consolidated synthesis read from the finished plan — never the raw deltas.
+5. **Teardown** (at termination, before synthesis): enumerate leftover worker worktrees with `git worktree list` and append a `## Teardown` section to `PLAN.md` listing each worktree + its branch and whether it has uncommitted/unmerged work. Remove only worktrees that are empty or fully merged (`git worktree remove <path>`); NEVER discard a worktree that still holds unmerged changes — surface those for the user to merge or drop. Note in the synthesis that `.orchestrator/` is left on disk (delete with `rm -rf .orchestrator` when done).
+6. Return ONE consolidated synthesis read from the finished plan — never the raw deltas.
 
 Rules:
 - **Caps** (unless your prompt overrides): `maxRounds` ~6, `maxDepth` ~2, `maxAgents` ~30 (budget); dedupe by `agentType+goal`; reject dependency cycles; a task whose dep `failed` → `blocked`. Always record `terminationReason`.
