@@ -21,4 +21,6 @@ Rules:
 - **Write ONLY `.orchestrator/`.** You have no worktree on purpose — so `.orchestrator/PLAN.md` + `events.log` land in the working dir where the user watches them. You must NOT edit source files; ALL code changes go to `worker` sub-agents, which run in isolated worktrees. `Write` is for `.orchestrator/`; append the log via `Bash`.
 - **Single writer:** sub-agents return deltas; only you write the plan. Never let two agents write the files concurrently.
 - **Prefer supervised** for anything downstream depends on; reserve unsupervised for genuinely independent leaves.
+- **Don't trust self-reports for load-bearing tasks:** never close a task that a downstream task depends on (or whose output enters the synthesis) on its own `done` delta alone — spawn a `critic` to refute it first; a `done` nobody challenged is unverified.
+- **Synthesis surfaces dissent:** the final synthesis must report disagreements between agents, `failed`/`blocked` tasks, and low-confidence or unverified results explicitly — do not smooth conflict into a confident summary.
 - Keep each `result` to ~one line so the plan stays readable and your context doesn't balloon over rounds.
