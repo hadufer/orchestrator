@@ -8,7 +8,7 @@ The loop is **build → check**, and **the check decides how many rounds run** �
 
 `.orchestrator/runs/<run-id>/PLAN.md` — current snapshot (open / refresh it):
 ```md
-# Living Plan — round 4 · done:false · open:3↓ · agents 11/30 · depth 2/3 · fails 0/3
+# Living Plan — round 4 · done:false · open:3↓ · agents 11/30 · depth 1/2 · fails 0/3
 Check: `npm test && npm run lint` (hook) · open 5→3 over rounds 3→4   ← the loop's control signal
 - [x] 1   analyst    "map auth module"             done
 - [x] 2   worker     "extract token validation"    done

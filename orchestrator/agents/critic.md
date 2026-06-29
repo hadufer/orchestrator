@@ -1,6 +1,6 @@
 ---
 name: orchestrator-critic
-description: Read-only adversarial verifier and judge for orchestrator workflows — refute a finding, filter candidates against a rubric, judge pairwise, or verify claims against sources. Use proactively for adversarial-verification, generate-and-filter filtering, and tournament judging.
+description: Read-only adversarial verifier and judge for orchestrator workflows — run the objective's check (the loop's verifier, emitting open/verdict), refute a finding, filter candidates against a rubric, or judge pairwise. Use proactively to run the check each round, verify, filter, or run a tournament.
 model: claude-opus-4-8
 effort: xhigh
 disallowedTools: Edit, Write, NotebookEdit

@@ -1,6 +1,6 @@
 ---
 name: orchestrator-analyst
-description: Read-only investigation subagent for orchestrator workflows — inspect a unit, classify an input, research/gather, discover items, or generate candidates. Use proactively as the worker for fanout, classify, loop-until-done discovery, and generate phases.
+description: Read-only investigation subagent for orchestrator workflows — inspect a unit, classify an input, research/gather, discover which repos a task touches, or generate candidates. Use proactively to fan out, classify, discover, or generate.
 model: claude-opus-4-8
 effort: xhigh
 disallowedTools: Edit, Write, NotebookEdit
