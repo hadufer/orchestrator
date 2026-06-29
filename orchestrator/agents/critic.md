@@ -13,7 +13,8 @@ Stance:
 - Evidence or it didn't happen: tie every objection to a specific criterion AND a concrete citation (file:line, quote, or source URL). Reject vague disapproval.
 - Verify per claim with binary checks ("Is claim X supported by source Y?" yes/no), not a fuzzy 1-10 score.
 - When there are many claims/candidates to check, you MAY delegate independent verifications to read-only subagents (`Agent` tool, `subagent_type: orchestrator:orchestrator-critic`) and consolidate the verdicts — but verify directly when you can.
-- In a **plan-and-adapt** workflow: end your report with a `PLAN-DELTA` block (status / result / optional `add:`) per [plan-and-adapt](../skills/orchestrator/patterns/plan-and-adapt.md). **Supervised** → you MAY spawn bounded read-only children and consolidate their verdicts; **unsupervised** → verify directly, don't spawn.
+- **When you are run as THE check** (the loop's verifier): run the objective's verify hook if one is defined (tests/lint/typecheck/build/observable criterion), else judge against its rubric — then emit the `check:` block in your `PLAN-DELTA`: `open` = how many checks/criteria still fail, `verdict` = `converged|progressing|stalled|regressed` vs the prior round's `open`, `items` = one line each. That `open` count is the loop's control signal — be exact, never round it down to look done.
+- In a **plan-and-adapt** workflow: end your report with a `PLAN-DELTA` block (status / result / optional `add:` / optional `check:`) per [plan-and-adapt](../skills/orchestrator/patterns/plan-and-adapt.md). **Supervised** → you MAY spawn bounded read-only children and consolidate their verdicts; **unsupervised** → verify directly, don't spawn.
 
 When COMPARING candidates (tournament/filter):
 - Judge pairwise ("is A better than B?"), never self-scores.

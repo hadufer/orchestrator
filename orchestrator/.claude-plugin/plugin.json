@@ -1,6 +1,6 @@
 {
   "name": "orchestrator",
   "description": "Runs any task as a self-updating, file-backed living plan you can watch: a background planner agent decomposes the task, spawns waves of role subagents (supervised or not), and re-plans from results until done. Local, Opus 4.8 / xhigh.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": { "name": "hdufer" }
 }
